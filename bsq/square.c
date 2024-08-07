@@ -6,7 +6,7 @@
 /*   By: alexis <alexis@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/07 11:12:02 by alexis            #+#    #+#             */
-/*   Updated: 2024/08/07 13:45:01 by alexis           ###   ########.fr       */
+/*   Updated: 2024/08/07 14:00:13 by alexis           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,9 @@ t_Square	find_largest_square(char **map, int rows, int cols, char obstacle)
 		dp[i] = malloc(cols * sizeof(int));
 		i++;
 	}
-	max_square = {0, 0, 0};
+	max_square.x = 0;
+	max_square.y = 0;
+	max_square.size = 0;
 	i = 0;
 	while (i < rows)
 	{
