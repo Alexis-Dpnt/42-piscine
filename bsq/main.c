@@ -3,64 +3,44 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: aledupon <aledupon@student.42.fr>          +#+  +:+       +#+        */
+/*   By: alexis <alexis@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/08/06 09:37:11 by mazeghou          #+#    #+#             */
-/*   Updated: 2024/08/06 14:30:26 by aledupon         ###   ########.fr       */
+/*   Created: 2024/08/07 10:58:46 by alexis            #+#    #+#             */
+/*   Updated: 2024/08/07 13:37:15 by alexis           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <unistd.h>
-#include <fcntl.h>
+#include "map.h"
+#include "square.h"
 
-#define MAXBUFLEN 100000
-
-int	check_argc(int i, char *c)
+int	main(int argc, char **argv)
 {
-	if (i != 4)
-	{
-		fprintf(stderr, "Usage: %s <arg1> <arg2> <arg3>\n", c);
-		return (1);
-	}
-	return (0);
-}
+	int			i;
+	int			rows;
+	int			cols;
+	char		obstacle;
+	char		full;
+	char		empty;
+	char		**map;
+	t_Square	largest_square;
 
-int	check_result(int i)
-{
-	if (i == -1)
+	if (argc < 2)
 	{
-		perror("Erreur lors de l'exécution de la commande");
-		return (1);
+		fprintf(stderr, "Usage: %s <filename>\n", argv[0]);
+		return (EXIT_FAILURE);
 	}
-	return (0);
-}
-
-int	main(int argc, char *argv[])
-{
-	int		result;
-	char	command[256];
-	int		fd;
-	int		sz;
-	char	*c;
-
-	if (check_argc(argc, argv[0]) == 1)
-		return (1);
-	snprintf(command, sizeof(command), "perl map.pl %s %s %s > map",
-		argv[1], argv[2], argv[3]);
-	result = system(command);
-	if (check_result(result) == 1)
-		return (1);
-	c = (char *)malloc(MAXBUFLEN * sizeof(char));
-	fd = open ("map", O_RDONLY);
-	if (fd < 0)
+	map = read_map(argv[1], &rows, &cols, &empty, &obstacle, &full);
+	largest_square = find_largest_square(map, rows, cols, obstacle);
+	draw_square(map, largest_square, full);
+	print_map(map, rows, cols);
+	i = 0;
+	while (i < rows)
 	{
-		perror("r1");
-		exit(1);
+		free(map[i]);
+		i++;
 	}
-	sz = read(fd, c, MAXBUFLEN);
-	c[sz] = '\0';
-	printf("%s", c);
-	return (0);
+	free(map);
+	return (EXIT_SUCCESS);
 }
