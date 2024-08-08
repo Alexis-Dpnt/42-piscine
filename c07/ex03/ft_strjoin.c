@@ -6,77 +6,92 @@
 /*   By: aledupon <aledupon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/29 14:42:28 by aledupon          #+#    #+#             */
-/*   Updated: 2024/08/05 09:32:12 by aledupon         ###   ########.fr       */
+/*   Updated: 2024/08/08 15:44:45 by aldupon          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <stdlib.h>
-#include <unistd.h>
 
-char	*ft_strcat(char *dest, char *src)
+int	ft_strlen(char *src)
 {
-	int	i;
-	int	n;
+	int	len;
 
-	i = 0;
-	n = 0;
-	while (dest[i] != '\0')
-		i++;
-	while (src[n] != '\0')
+	len = 0;
+	while (src[len])
 	{
-		dest[i] = src[n];
-		i++;
-		n++;
+		len++;
 	}
-	dest[i] = '\0';
-	return (dest);
+	return (len);
 }
 
-int	ft_strlen(char *str)
+void	ft_strcopy(char *dest, char *src)
 {
 	int	i;
 
 	i = 0;
-	while (str[i])
+	while (src[i])
+	{
+		dest[i] = src[i];
 		i++;
-	return (i);
+	}
+	dest[i] = '\0';
+}
+
+int	ft_total_len(int size, char **strs, char *sep)
+{
+	int	total_len;
+	int	i;
+	int	sep_len;
+
+	total_len = 0;
+	i = 0;
+	sep_len = ft_strlen(sep);
+	while (i < size)
+	{
+		total_len += ft_strlen(strs[i]);
+		i++;
+	}
+	if (size > 1)
+	{
+		total_len += (size - 1) * sep_len;
+	}
+	return (total_len + 1);
+}
+
+void	ft_copy_strings(int size, char **strs, char *sep, char *result)
+{
+	int	i;
+	int	position;
+	int	str_len;
+	int	sep_len;
+
+	position = 0;
+	sep_len = ft_strlen(sep);
+	i = 0;
+	while (i < size)
+	{
+		str_len = ft_strlen(strs[i]);
+		ft_strcopy(result + position, strs[i]);
+		position += str_len;
+		if (i < size - 1)
+		{
+			ft_strcopy(result + position, sep);
+			position += sep_len;
+		}
+		i++;
+	}
 }
 
 char	*ft_strjoin(int size, char **strs, char *sep)
 {
-	char	*dest;
-	int		i;
-	int		n;
-	int		total_length;
+	int		total_len;
+	char	*result;
 
-	i = 0;
-	total_length = 0;
-	n = 0;
-	while (n < size)
-	{
-		total_length += ft_strlen(strs[i]);
-		if (n < size - 1)
-			total_length += ft_strlen(sep);
-		n++;
-	}
-	dest = malloc(sizeof(char) * total_length + 1);
-	while (i < size)
-	{
-		ft_strcat(dest, strs[i]);
-		if (i != size - 1)
-			ft_strcat(dest, sep);
-		i++;
-	}
-	return (dest);
+	total_len = ft_total_len(size, strs, sep);
+	result = malloc(total_len);
+	if (!result)
+		return (NULL);
+	ft_copy_strings(size, strs, sep, result);
+	result[total_len - 1] = '\0';
+	return (result);
 }
-/*#include <stdio.h>
-
-int main(void)
-{
-	char *a[2] = { "salut", "cava" };
-	char *sep = ", ";
-	int	size;
-
-	size = 2;
-	printf("%s\n", ft_strjoin(size, a, sep));
-}*/
